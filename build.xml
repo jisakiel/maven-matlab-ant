@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="portus-matlabprogs" default="compile">
+	<property name="mcc" value="${matlab.path}/bin/mcc"/>
+	<property name="mcc.defaultargs" value="-N -w enable:specified_file_mismatch -w enable:repeated_file -w enable:switch_ignored -w enable:missing_lib_sentinel -w enable:demo_license -R -nojvm -R -nodisplay -v"/>
+
+	<path id="project.class.path">
+	    <path path="${runtime_classpath}"/>
+	</path>
+	
+	<taskdef name="mcc" classname="com.qualitasremos.portus.ant.MccTask" classpathref="project.class.path"/>
+
+	<target name="compile">
+
+		<mcc name="kk" targetdir="${project.build.directory}/matlab/kk">
+			<main filename="matlab_main/RT_driver_img_hourly.m"/>
+			<includes>
+				<dirset dir="matlab_scripts" />
+				<fileset dir="matlab_main" file="RT_img_hourly.m" />
+			</includes>
+		</mcc> 
+	</target>
+
+</project>
