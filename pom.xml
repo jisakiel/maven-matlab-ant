@@ -106,8 +106,6 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
-						<!-- conceptually it would be in compile phase, but it makes it too 
-							annoying in eclipse -->
 						<phase>compile</phase>
 						<configuration>
 							<target>
