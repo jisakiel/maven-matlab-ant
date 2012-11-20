@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright 2012 Qualitas Remos
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.qualitasremos.portus</groupId>
+	<version>1.4-SNAPSHOT</version>
+
+	<artifactId>matlabprogs</artifactId>
+	<name>Matlab programs</name>
+	<packaging>jar</packaging> <!-- TODO refactor to nar packaging or use custom packaging -->
+
+	<!-- code lifted from aved-classifier packaging -->
+	<profiles>
+		<profile>
+			<id>Linux32</id>
+			<activation>
+				<os>
+					<name>Linux</name>
+					<arch>i386</arch>
+				</os>
+			</activation>
+			<properties>
+				<!-- The nar library directory -->
+				<narLibDir>nar/lib/i386-Linux-g++/shared</narLibDir>
+				<matlabPath>/opt/MATLAB/R2011a/</matlabPath>
+			</properties>
+		</profile>
+		<profile>
+			<id>Linux64</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+				<os>
+					<name>Linux</name>
+					<arch>amd64</arch>
+				</os>
+			</activation>
+			<properties>
+				<narLibDir>nar/lib/amd64-Linux-g++/shared</narLibDir>
+				<matlabPath>/opt/MATLAB/R2011a/</matlabPath>
+			</properties>
+		</profile>
+		<profile>
+			<id>Mac32</id>
+			<activation>
+				<os>
+					<name>mac os x</name>
+					<arch>i386</arch>
+				</os>
+			</activation>
+			<properties>
+				<narLibDir>nar/lib/i386-MacOSX-g++/shared</narLibDir>
+				<matlabPath>/Applications/MATLAB_R2011a.app/</matlabPath>
+			</properties>
+		</profile>
+		<profile>
+			<id>Mac64</id>
+			<activation>
+				<os>
+					<name>mac os x</name>
+					<arch>x86_64</arch>
+				</os>
+			</activation>
+			<properties>
+				<narLibDir>nar/lib/x86_64-MacOSX-g++/shared</narLibDir>
+				<matlabPath>/Applications/MATLAB_R2011a.app/</matlabPath>
+			</properties>
+		</profile>
+	</profiles>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>maven-nar-repo</id>
+			<name>Duns' Maven Snapshot Repository</name>
+			<url>http://duns.github.com/maven-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<dependencies>
+		<!-- this is only included for our custom MccTask to build against ant 
+			libraries, not needed in runtime -->
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.8.2</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<version>1.7</version>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<configuration>
+							<target>
+								<!-- export those properties and run build.xml from the matlab source 
+									file -->
+								<property name="matlab.path" value="${matlabPath}" />
+								<property name="runtime_classpath" refid="maven.runtime.classpath" />
+								<ant antfile="${basedir}/build.xml" target="compile"
+									inheritRefs="true" dir="${basedir}/src/main/matlab" />
+
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- NOTE: We don't need a groupId specification because the group is 
+					org.apache.maven.plugins ...which is assumed by default. -->
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>zip-assembly</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>compiler-binaries.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+
+
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-antrun-plugin
+										</artifactId>
+										<versionRange>
+											[1.7,)
+										</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
+
