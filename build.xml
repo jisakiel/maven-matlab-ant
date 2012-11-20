@@ -9,25 +9,57 @@
 	
 	<taskdef name="mcc" classname="com.qualitasremos.portus.ant.MccTask" classpathref="project.class.path"/>
 	<property name="target.directory" value="${project.build.directory}/matlab/" />
-	
-	<uptodate property="already-compiled">
-		<!--only check matlab files and must already be in parent src folder -->
-		<srcfiles dir="." includes="**/*.m" />
 		
-		<!--check against parent target dir modification date. clean is done by maven -->
-		<mapper type="merge" to="${target.directory}" />
-	</uptodate>
-	
-	<echo message="check matlab files already compiled: ${already-compiled}"/>
-	
-	<target name="compile" unless="already-compiled">
-		<mcc name="kk" targetdir="${target.directory}/kk">
-			<main filename="matlab_main/RT_driver_img_hourly.m"/>
+	<!-- recompile checks are done is mcc in the way of the javac task, using modification dates -->
+	<target name="compile">
+		<mcc name="hfr_netcdf_hourly" targetdir="${target.directory}/hfr_netcdf_hourly">
+			<main file="matlab_main/RT_driver_netcdf_hourly.m"/>
 			<includes>
 				<dirset dir="matlab_scripts" />
-				<fileset dir="matlab_main" file="RT_img_hourly.m" />
+				<fileset file="matlab_main/RT_netcdf_hourly.m" />
+				<fileset file="matlab_main/RT_netcdf_stps.m" />
 			</includes>
 		</mcc> 
+					
+		<mcc name="hfr_intiles_hourly" targetdir="${target.directory}/hfr_intiles_hourly">
+			<main file="matlab_main/RT_driver_intiles_hourly.m"/>
+			<includes>
+				<fileset file="matlab_main/RT_intiles_hourly.m" />
+				<fileset file="matlab_main/RT_intiles_stps.m" />
+				<dirset dir="matlab_scripts" />
+			</includes>
+		</mcc> 
+		<mcc name="hfr_intiles_avg" targetdir="${target.directory}/hfr_intiles_avg">
+			<main file="matlab_main/RT_driver_intiles_avg.m"/>
+			<includes>
+				<fileset file="matlab_main/RT_intiles_avg.m" />
+				<dirset dir="matlab_scripts" />
+			</includes>
+		</mcc> 
+			
+		<mcc name="hfr_img_hourly" targetdir="${target.directory}/hfr_img_hourly">
+			<main file="matlab_main/RT_driver_img_hourly.m"/>
+			<includes>
+				<fileset file="matlab_main/RT_img_hourly.m" />
+				<fileset file="matlab_main/RT_rms_hourly.m" />
+				<dirset dir="matlab_scripts" />
+			</includes>
+		</mcc>
+		<mcc name="hfr_img_avg" targetdir="${target.directory}/hfr_img_avg">
+			<main file="matlab_main/RT_driver_img_avg.m"/>
+			<includes>
+				<fileset file="matlab_main/RT_img_avg.m" />
+				<dirset dir="matlab_scripts" />
+			</includes>
+		</mcc>
+			
+		<mcc name="MakeMonthlyReportRadar" targetdir="${target.directory}/MakeMonthlyReportRadar">
+			<main file="reports/MakeMonthlyReportRadar.m"/>
+			<includes>
+				<dirset dir="reports" />
+				<dirset dir="matlab_scripts" />
+			</includes>
+		</mcc> 	
 	</target>
-
+	
 </project>
