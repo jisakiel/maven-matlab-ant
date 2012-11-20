@@ -2,11 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>portus-parent</artifactId>
-		<groupId>com.qualitasremos.portus</groupId>
-		<version>1.4-SNAPSHOT</version>
-	</parent>
+	<groupId>com.qualitasremos.portus</groupId>
+	<version>1.4-SNAPSHOT</version>
 
 	<artifactId>matlabprogs</artifactId>
 	<name>Matlab programs</name>
@@ -145,31 +142,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!-- apparently already attached... :S
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<id>attach-artifacts</id>
-						<phase>package</phase>
-						<goals>
-							<goal>attach-artifact</goal>
-						</goals>
-						<configuration>
-							<artifacts>
-								<artifact>
-									<file>${project.build.directory}/${artifactId}-${version}-matlabprogs</file>
-									<type>tar.bz2</type>
-									<classifier>matlabprogs</classifier>
-								</artifact>
-							</artifacts>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			-->
 		</plugins>
 		<pluginManagement>
 			<plugins>
