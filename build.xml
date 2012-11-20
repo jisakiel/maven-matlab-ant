@@ -8,10 +8,20 @@
 	</path>
 	
 	<taskdef name="mcc" classname="com.qualitasremos.portus.ant.MccTask" classpathref="project.class.path"/>
-
-	<target name="compile">
-
-		<mcc name="kk" targetdir="${project.build.directory}/matlab/kk">
+	<property name="target.directory" value="${project.build.directory}/matlab/" />
+	
+	<uptodate property="already-compiled">
+		<!--only check matlab files and must already be in parent src folder -->
+		<srcfiles dir="." includes="**/*.m" />
+		
+		<!--check against parent target dir modification date. clean is done by maven -->
+		<mapper type="merge" to="${target.directory}" />
+	</uptodate>
+	
+	<echo message="check matlab files already compiled: ${already-compiled}"/>
+	
+	<target name="compile" unless="already-compiled">
+		<mcc name="kk" targetdir="${target.directory}/kk">
 			<main filename="matlab_main/RT_driver_img_hourly.m"/>
 			<includes>
 				<dirset dir="matlab_scripts" />
